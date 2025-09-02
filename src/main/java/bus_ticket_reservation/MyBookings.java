@@ -6,45 +6,81 @@ import java.awt.*;
 import java.sql.*;
 
 public class MyBookings extends JFrame {
-    private int userId;
+    private final int userId;
     private JTable table;
     private DefaultTableModel model;
-    private JButton cancelButton, backButton;
 
     public MyBookings(int userId) {
         this.userId = userId;
 
         setTitle("My Bookings");
-        setSize(800, 400);
+        setSize(900, 450);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        initUI();
+        loadBookings();
+
+        setVisible(true);
+    }
+
+    private void initUI() {
+        // Table model
         model = new DefaultTableModel(
-                new String[]{"Booking ID", "Bus Name", "Source", "Destination", "Journey Date", "Seats Booked", "Price"},
+                new String[]{"Booking ID", "Bus Name", "Source", "Destination", "Journey Date", "Seats", "Price"},
                 0
-        );
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // make table non-editable
+            }
+        };
+
+        // Table
         table = new JTable(model);
+        table.setRowHeight(28);
+        table.setFont(new Font("Poppins", Font.PLAIN, 14));
+        table.getTableHeader().setFont(new Font("Poppins", Font.BOLD, 14));
+
         JScrollPane scrollPane = new JScrollPane(table);
 
-        cancelButton = new JButton("Cancel Booking");
-        backButton = new JButton("Back");
+        // Buttons
+        JButton cancelButton = styledButton("Cancel Booking", new Color(220, 53, 69));
+        JButton refreshButton = styledButton("Refresh", new Color(0, 102, 204));
+        JButton backButton = styledButton("Back", new Color(128, 128, 128));
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(cancelButton);
+        buttonPanel.add(refreshButton);
         buttonPanel.add(backButton);
 
+        // Add components
         add(scrollPane, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        loadBookings();
-
-        // Cancel booking event
+        // Actions
         cancelButton.addActionListener(e -> cancelBooking());
-
-        // Back button → close this window
+        refreshButton.addActionListener(e -> loadBookings());
         backButton.addActionListener(e -> dispose());
+    }
 
-        setVisible(true);
+    private JButton styledButton(String text, Color bgColor) {
+        JButton button = new JButton(text);
+        button.setFocusPainted(false);
+        button.setFont(new Font("Poppins", Font.BOLD, 14));
+        button.setBackground(bgColor);
+        button.setForeground(Color.WHITE);
+        button.setPreferredSize(new Dimension(160, 40));
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(bgColor.darker());
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(bgColor);
+            }
+        });
+        return button;
     }
 
     private void loadBookings() {
@@ -78,17 +114,39 @@ public class MyBookings extends JFrame {
     private void cancelBooking() {
         int row = table.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a booking to cancel.");
+            JOptionPane.showMessageDialog(this, "⚠️ Please select a booking to cancel.");
             return;
         }
 
         int bookingId = (int) model.getValueAt(row, 0);
         int seatsBooked = (int) model.getValueAt(row, 5);
 
+        String input = JOptionPane.showInputDialog(
+                this,
+                "This booking has " + seatsBooked + " seats.\nHow many seats do you want to cancel?",
+                "Cancel Seats",
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (input == null || input.trim().isEmpty()) return;
+
+        int seatsToCancel;
+        try {
+            seatsToCancel = Integer.parseInt(input.trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "❌ Invalid number.");
+            return;
+        }
+
+        if (seatsToCancel <= 0 || seatsToCancel > seatsBooked) {
+            JOptionPane.showMessageDialog(this, "❌ Enter a valid number (1 - " + seatsBooked + ").");
+            return;
+        }
+
         try (Connection conn = Connect_Db.getConnection()) {
             conn.setAutoCommit(false);
 
-            // Get bus_id first
+            // Get bus_id
             int busId = -1;
             PreparedStatement pst1 = conn.prepareStatement("SELECT bus_id FROM Bookings WHERE booking_id=?");
             pst1.setInt(1, bookingId);
@@ -97,19 +155,31 @@ public class MyBookings extends JFrame {
                 busId = rs.getInt("bus_id");
             }
 
-            // Delete booking
-            PreparedStatement pst2 = conn.prepareStatement("DELETE FROM Bookings WHERE booking_id=?");
-            pst2.setInt(1, bookingId);
-            pst2.executeUpdate();
+            if (seatsToCancel == seatsBooked) {
+                // Cancel full booking
+                PreparedStatement pst2 = conn.prepareStatement("DELETE FROM Bookings WHERE booking_id=?");
+                pst2.setInt(1, bookingId);
+                pst2.executeUpdate();
+            } else {
+                // Update booking with fewer seats
+                PreparedStatement pst2 = conn.prepareStatement(
+                        "UPDATE Bookings SET seats_booked = seats_booked - ? WHERE booking_id=?"
+                );
+                pst2.setInt(1, seatsToCancel);
+                pst2.setInt(2, bookingId);
+                pst2.executeUpdate();
+            }
 
-            // Update seat availability
-            PreparedStatement pst3 = conn.prepareStatement("UPDATE buses SET seats_available = seats_available + ? WHERE bus_id=?");
-            pst3.setInt(1, seatsBooked);
+            // Update bus seats
+            PreparedStatement pst3 = conn.prepareStatement(
+                    "UPDATE buses SET seats_available = seats_available + ? WHERE bus_id=?"
+            );
+            pst3.setInt(1, seatsToCancel);
             pst3.setInt(2, busId);
             pst3.executeUpdate();
 
             conn.commit();
-            JOptionPane.showMessageDialog(this, "Booking cancelled successfully!");
+            JOptionPane.showMessageDialog(this, "✅ " + seatsToCancel + " seat(s) cancelled successfully!");
             loadBookings();
 
         } catch (Exception e) {

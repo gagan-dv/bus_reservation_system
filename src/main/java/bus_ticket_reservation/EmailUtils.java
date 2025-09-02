@@ -8,8 +8,8 @@ public class EmailUtils {
 
     private static final String SMTP_HOST = "smtp.gmail.com";
     private static final String SMTP_PORT = "587";
-    private static final String EMAIL_USERNAME = "your_email@gmail.com"; // change
-    private static final String EMAIL_PASSWORD = "app_password_here";   // use Gmail App Password
+    private static final String EMAIL_USERNAME = "m0nkrus999@gmail.com"; // change
+    private static final String EMAIL_PASSWORD = "lgba lebk keps sggr ";   // use Gmail App Password
 
     public static void sendEmail(String to, String subject, String body) throws MessagingException {
         Properties props = new Properties();

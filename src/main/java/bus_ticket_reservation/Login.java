@@ -107,11 +107,13 @@ public class Login extends JFrame implements ActionListener {
             setVisible(false);
             new Register().setVisible(true);
         }
-        // Forgot password flow (placeholder)
+        // 🔹 Forgot password flow
         else if (ae.getSource() == forgotButton) {
-            JOptionPane.showMessageDialog(this, "Forgot password functionality not implemented yet.");
+            setVisible(false);
+            new ForgotPassword().setVisible(true);
         }
     }
+
 
     public static void main(String[] args) {
         new Login();

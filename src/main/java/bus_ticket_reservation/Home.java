@@ -18,24 +18,27 @@ public class Home extends JFrame {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(12, 12, 12, 12);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
 
+        // ---- Welcome Label ----
         JLabel welcomeLabel = new JLabel("Welcome, " + username, SwingConstants.CENTER);
         welcomeLabel.setForeground(new Color(0, 102, 204));
         welcomeLabel.setFont(new Font("Poppins", Font.BOLD, 26));
+
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = GridBagConstraints.REMAINDER; // span across all columns
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE; // don't stretch label
+        gbc.insets = new Insets(20, 0, 30, 0); // spacing above/below label
         panel.add(welcomeLabel, gbc);
 
-        gbc.gridwidth = 2;
+        // ---- Reset for buttons ----
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(12, 12, 12, 12);
+        gbc.gridwidth = 1;
         gbc.gridx = 0;
 
-        JButton searchBus = styledButton("Search Buses", new Color(0, 102, 204));
-        gbc.gridy = 1;
-        panel.add(searchBus, gbc);
-
+        // ---- Buttons ----
         JButton bookTicket = styledButton("Book Ticket", new Color(0, 102, 204));
         gbc.gridy = 2;
         panel.add(bookTicket, gbc);
@@ -43,10 +46,6 @@ public class Home extends JFrame {
         JButton myBookings = styledButton("My Bookings", new Color(0, 102, 204));
         gbc.gridy = 3;
         panel.add(myBookings, gbc);
-
-        JButton cancelTicket = styledButton("Cancel Ticket", new Color(220, 53, 69));
-        gbc.gridy = 4;
-        panel.add(cancelTicket, gbc);
 
         JButton transferTicket = styledButton("Transfer Ticket", new Color(0, 102, 204));
         gbc.gridy = 5;
@@ -60,11 +59,9 @@ public class Home extends JFrame {
         gbc.gridy = 7;
         panel.add(logout, gbc);
 
-        // Actions (navigation stubs)
-        searchBus.addActionListener(e -> new SearchBus(userId).setVisible(true));
-        bookTicket.addActionListener(e -> new BookTicket(userId).setVisible(true));
+        // ---- Button Actions ----
+        bookTicket.addActionListener(e -> new SearchAndBookBus(userId).setVisible(true));
         myBookings.addActionListener(e -> new MyBookings(userId).setVisible(true));
-        cancelTicket.addActionListener(e -> new CancelTicket(userId).setVisible(true));
         transferTicket.addActionListener(e -> new TransferTicket(userId).setVisible(true));
         validateTicket.addActionListener(e -> new ValidateTicket(userId).setVisible(true));
         logout.addActionListener(e -> {
@@ -72,8 +69,9 @@ public class Home extends JFrame {
             new Login().setVisible(true);
         });
 
+        // ---- Frame Setup ----
         add(panel);
-        setSize(600, 700);
+        setSize(550, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
@@ -85,13 +83,14 @@ public class Home extends JFrame {
         button.setFont(new Font("Poppins", Font.BOLD, 16));
         button.setBackground(bgColor);
         button.setForeground(Color.WHITE);
-        button.setPreferredSize(new Dimension(250, 45));
+        button.setPreferredSize(new Dimension(450, 45)); // button size
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(bgColor.darker());
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 button.setBackground(bgColor);
             }
