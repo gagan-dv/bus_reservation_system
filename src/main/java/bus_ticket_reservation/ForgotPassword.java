@@ -11,15 +11,23 @@ public class ForgotPassword extends JFrame {
     private JPasswordField newPasswordField;
     private JButton requestButton, resetButton, backButton;
 
+    // ==== Main Method ====
+    public static void main(String[] args) {
+        new ForgotPassword();
+    }
+
+    // ==== Constructor ====
     public ForgotPassword() {
-        super("");
+        super("Forgot Password");
+
+        // ==== Window Setup ====
         setSize(500, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
-        getContentPane().setBackground(new Color(245, 248, 255)); // soft background
+        getContentPane().setBackground(new Color(245, 248, 255));
         setLayout(null);
 
-        // Title panel
+        // ==== Title Panel ====
         JPanel headerPanel = new JPanel();
         headerPanel.setBounds(0, 0, 500, 50);
         headerPanel.setBackground(new Color(0, 102, 204));
@@ -31,7 +39,7 @@ public class ForgotPassword extends JFrame {
         headerPanel.add(titleLabel, BorderLayout.CENTER);
         add(headerPanel);
 
-        // Form labels & fields
+        // ==== Email ====
         JLabel emailLabel = new JLabel("Registered Email:");
         emailLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
         emailLabel.setBounds(80, 100, 150, 30);
@@ -47,6 +55,7 @@ public class ForgotPassword extends JFrame {
         requestButton.setBounds(150, 150, 200, 40);
         add(requestButton);
 
+        // ==== Token ====
         JLabel tokenLabel = new JLabel("Enter Token:");
         tokenLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
         tokenLabel.setBounds(80, 210, 150, 30);
@@ -57,6 +66,7 @@ public class ForgotPassword extends JFrame {
         tokenField.setBounds(240, 210, 180, 30);
         add(tokenField);
 
+        // ==== New Password ====
         JLabel newPassLabel = new JLabel("New Password:");
         newPassLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
         newPassLabel.setBounds(80, 260, 150, 30);
@@ -72,24 +82,25 @@ public class ForgotPassword extends JFrame {
         resetButton.setBounds(150, 320, 200, 40);
         add(resetButton);
 
-        // Back button
+        // ==== Back Button ====
         backButton = new JButton("Back to Login");
         styleButton(backButton, new Color(153, 153, 153));
         backButton.setBounds(150, 380, 200, 40);
         add(backButton);
 
-        // Actions
+        // ==== Button Actions ====
         requestButton.addActionListener(e -> handleRequestReset());
         resetButton.addActionListener(e -> handlePasswordReset());
         backButton.addActionListener(e -> {
             dispose();
-            new Login().setVisible(true);
+            new Login();
         });
 
+        // ==== Show Window ====
         setVisible(true);
     }
 
-    // Reusable style for text fields
+    // ==== Reusable style for text fields ====
     private void styleTextField(JTextField field) {
         field.setFont(new Font("Poppins", Font.PLAIN, 14));
         field.setBorder(BorderFactory.createCompoundBorder(
@@ -99,7 +110,7 @@ public class ForgotPassword extends JFrame {
         field.setBackground(Color.WHITE);
     }
 
-    // Reusable style for buttons
+    // ==== Reusable style for buttons ====
     private void styleButton(JButton button, Color bg) {
         button.setFocusPainted(false);
         button.setBackground(bg);
@@ -109,7 +120,7 @@ public class ForgotPassword extends JFrame {
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
-    // Generate secure random token
+    // ==== Generate secure random token ====
     private String generateToken() {
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[8];
@@ -117,7 +128,7 @@ public class ForgotPassword extends JFrame {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
-    // Step 1: Request reset → store token & expiry
+    // ==== Step 1: Request reset ====
     private void handleRequestReset() {
         String email = emailField.getText().trim();
         if (email.isEmpty()) {
@@ -137,14 +148,7 @@ public class ForgotPassword extends JFrame {
 
             if (rows > 0) {
                 String subject = "Bus Reservation Password Reset";
-                String body = "Dear user,\n\n"
-                        + "We received a request to reset your password.\n"
-                        + "Please use the following token to reset your password:\n\n"
-                        + token + "\n\n"
-                        + "This token is valid for 15 minutes.\n\n"
-                        + "If you did not request this, please ignore the email.\n\n"
-                        + "Best regards,\nBus Reservation System";
-
+                String body = "Your reset token is: " + token + "\n\nValid for 15 minutes.";
                 EmailUtils.sendEmail(email, subject, body);
                 JOptionPane.showMessageDialog(this, "A reset token has been sent to your email.");
             } else {
@@ -157,7 +161,7 @@ public class ForgotPassword extends JFrame {
         }
     }
 
-    // Step 2: Reset password using token
+    // ==== Step 2: Reset password ====
     private void handlePasswordReset() {
         String email = emailField.getText().trim();
         String token = tokenField.getText().trim();
@@ -185,7 +189,7 @@ public class ForgotPassword extends JFrame {
                 }
                 JOptionPane.showMessageDialog(this, "Password reset successful! You can now log in.");
                 dispose();
-                new Login().setVisible(true);
+                new Login();
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid or expired token.");
             }
@@ -194,9 +198,5 @@ public class ForgotPassword extends JFrame {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
-    }
-
-    public static void main(String[] args) {
-        new ForgotPassword();
     }
 }

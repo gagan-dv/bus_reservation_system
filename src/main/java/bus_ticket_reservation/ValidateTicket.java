@@ -10,24 +10,24 @@ public class ValidateTicket extends JFrame {
     private int userId;
 
     public ValidateTicket(int userId) {
-        this.userId = userId; // store the logged-in user
+        this.userId = userId;
         setTitle("Validate Ticket");
         setSize(450, 350);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Main panel with padding
+        // ✅ Main panel
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(new Color(245, 247, 250));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Title
+        // ✅ Title
         JLabel titleLabel = new JLabel("Validate Your Ticket", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Poppins", Font.BOLD, 20));
         titleLabel.setForeground(new Color(0, 102, 204));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
-        // Form Panel
+        // ✅ Form Panel
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(Color.WHITE);
         formPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -41,8 +41,7 @@ public class ValidateTicket extends JFrame {
 
         JLabel bookingLabel = new JLabel("Enter Booking ID:");
         bookingLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridx = 0; gbc.gridy = 0;
         formPanel.add(bookingLabel, gbc);
 
         bookingIdField = new JTextField(15);
@@ -50,7 +49,7 @@ public class ValidateTicket extends JFrame {
         gbc.gridx = 1;
         formPanel.add(bookingIdField, gbc);
 
-        // Buttons
+        // ✅ Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         buttonPanel.setBackground(Color.WHITE);
 
@@ -60,21 +59,20 @@ public class ValidateTicket extends JFrame {
         buttonPanel.add(validateButton);
         buttonPanel.add(backButton);
 
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2;
         formPanel.add(buttonPanel, gbc);
 
         mainPanel.add(formPanel, BorderLayout.CENTER);
         add(mainPanel);
 
-        // Actions
+        // ✅ Actions
         validateButton.addActionListener(e -> validateTicket());
         backButton.addActionListener(e -> dispose());
 
         setVisible(true);
     }
 
+    // 🔹 Styled button (kept same as your design)
     private JButton styledButton(String text, Color bgColor) {
         JButton button = new JButton(text);
         button.setFocusPainted(false);
@@ -84,12 +82,10 @@ public class ValidateTicket extends JFrame {
         button.setPreferredSize(new Dimension(120, 35));
         button.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
 
-        // Hover effect
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(bgColor.darker());
             }
-
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 button.setBackground(bgColor);
             }
@@ -97,8 +93,10 @@ public class ValidateTicket extends JFrame {
         return button;
     }
 
+    // 🔹 Simple logic for validation
     private void validateTicket() {
         String bookingIdText = bookingIdField.getText().trim();
+
         if (bookingIdText.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter a Booking ID.");
             return;
@@ -108,19 +106,15 @@ public class ValidateTicket extends JFrame {
         try {
             bookingId = Integer.parseInt(bookingIdText);
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Invalid Booking ID format.");
+            JOptionPane.showMessageDialog(this, "Booking ID must be a number.");
             return;
         }
 
         try (Connection conn = Connect_Db.getConnection()) {
-            String query = """
-                SELECT b.booking_id, b.seats_booked, bu.bus_name, bu.journey_date, bu.source, bu.destination
-                FROM Bookings b
-                JOIN buses bu ON b.bus_id = bu.bus_id
-                WHERE b.booking_id = ? AND b.user_id = ?
-            """;
-
-            PreparedStatement pst = conn.prepareStatement(query);
+            String sql = "SELECT b.seats_booked, bs.bus_name, bs.source, bs.destination, bs.journey_date " +
+                    "FROM Bookings b JOIN buses bs ON b.bus_id = bs.bus_id " +
+                    "WHERE b.booking_id=? AND b.user_id=?";
+            PreparedStatement pst = conn.prepareStatement(sql);
             pst.setInt(1, bookingId);
             pst.setInt(2, userId);
             ResultSet rs = pst.executeQuery();
@@ -128,9 +122,9 @@ public class ValidateTicket extends JFrame {
             if (rs.next()) {
                 int seats = rs.getInt("seats_booked");
                 String busName = rs.getString("bus_name");
-                String date = rs.getString("journey_date");
                 String source = rs.getString("source");
                 String destination = rs.getString("destination");
+                String date = rs.getString("journey_date");
 
                 if (seats > 0) {
                     JOptionPane.showMessageDialog(this,
@@ -138,18 +132,17 @@ public class ValidateTicket extends JFrame {
                                     "Booking ID: " + bookingId + "\n" +
                                     "Bus: " + busName + "\n" +
                                     "Route: " + source + " → " + destination + "\n" +
-                                    "Journey Date: " + date + "\n" +
-                                    "Seats Booked: " + seats,
-                            "Ticket Validated", JOptionPane.INFORMATION_MESSAGE);
+                                    "Date: " + date + "\n" +
+                                    "Seats: " + seats
+                    );
                 } else {
-                    JOptionPane.showMessageDialog(this, "Ticket is INVALID (no seats booked).");
+                    JOptionPane.showMessageDialog(this, "❌ Ticket is invalid (no seats booked).");
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "No booking found with this ID for your account.");
+                JOptionPane.showMessageDialog(this, "No booking found with this ID.");
             }
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error validating ticket: " + e.getMessage());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
     }
 

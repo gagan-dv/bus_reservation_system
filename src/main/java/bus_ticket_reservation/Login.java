@@ -6,10 +6,9 @@ import java.awt.event.*;
 import java.sql.*;
 
 public class Login extends JFrame implements ActionListener {
-    private JLabel l1, l2, titleLabel;
-    private JTextField t1;
-    private JPasswordField t2;
-    private JButton b1, b2, forgotButton;
+    private JTextField emailField;
+    private JPasswordField passwordField;
+    private JButton loginButton, backButton, forgotButton;
 
     public Login() {
         super("Login");
@@ -19,43 +18,43 @@ public class Login extends JFrame implements ActionListener {
         getContentPane().setBackground(Color.WHITE);
         setLayout(null);
 
-        titleLabel = new JLabel("Bus Ticket Reservation Login", SwingConstants.CENTER);
+        // 🔹 Title
+        JLabel titleLabel = new JLabel("Bus Ticket Reservation Login", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Poppins", Font.BOLD, 22));
         titleLabel.setForeground(new Color(0, 102, 204));
         titleLabel.setBounds(50, 20, 400, 40);
         add(titleLabel);
 
-        l1 = new JLabel("Email:");
-        l1.setBounds(80, 90, 100, 30);
-        add(l1);
+        // 🔹 Email
+        JLabel emailLabel = new JLabel("Email:");
+        emailLabel.setBounds(80, 90, 100, 30);
+        add(emailLabel);
 
-        t1 = new JTextField();
-        t1.setBounds(200, 90, 200, 30);
-        add(t1);
+        emailField = new JTextField();
+        emailField.setBounds(200, 90, 200, 30);
+        add(emailField);
 
-        l2 = new JLabel("Password:");
-        l2.setBounds(80, 140, 100, 30);
-        add(l2);
+        // 🔹 Password
+        JLabel passwordLabel = new JLabel("Password:");
+        passwordLabel.setBounds(80, 140, 100, 30);
+        add(passwordLabel);
 
-        t2 = new JPasswordField();
-        t2.setBounds(200, 140, 200, 30);
-        add(t2);
+        passwordField = new JPasswordField();
+        passwordField.setBounds(200, 140, 200, 30);
+        add(passwordField);
 
-        b1 = new JButton("Login");
-        b1.setBounds(80, 200, 120, 40);
-        b1.setBackground(new Color(0, 102, 204));
-        b1.setForeground(Color.WHITE);
-        b1.setFont(new Font("Poppins", Font.BOLD, 14));
-        b1.addActionListener(this);
-        add(b1);
+        // 🔹 Buttons
+        loginButton = new JButton("Login");
+        loginButton.setBounds(80, 200, 120, 40);
+        styleButton(loginButton, new Color(0, 102, 204));
+        loginButton.addActionListener(this);
+        add(loginButton);
 
-        b2 = new JButton("Back");
-        b2.setBounds(260, 200, 120, 40);
-        b2.setBackground(Color.GRAY);
-        b2.setForeground(Color.WHITE);
-        b2.setFont(new Font("Poppins", Font.BOLD, 14));
-        b2.addActionListener(this);
-        add(b2);
+        backButton = new JButton("Back");
+        backButton.setBounds(260, 200, 120, 40);
+        styleButton(backButton, Color.GRAY);
+        backButton.addActionListener(this);
+        add(backButton);
 
         forgotButton = new JButton("Forgot Password?");
         forgotButton.setBounds(150, 260, 200, 30);
@@ -69,51 +68,60 @@ public class Login extends JFrame implements ActionListener {
         setVisible(true);
     }
 
+    // 🔹 Reusable button style
+    private void styleButton(JButton btn, Color bgColor) {
+        btn.setBackground(bgColor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Poppins", Font.BOLD, 14));
+    }
+
     @Override
-    public void actionPerformed(ActionEvent ae) {
-        if (ae.getSource() == b1) { // Login
-            String email = t1.getText().trim();
-            String password = new String(t2.getPassword());
-
-            if (email.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please fill all fields");
-                return;
-            }
-
-            String q = "SELECT * FROM Users WHERE email=? AND password=?";
-            try (Connection con = Connect_Db.getConnection();
-                 PreparedStatement pst = con.prepareStatement(q)) {
-
-                pst.setString(1, email);
-                pst.setString(2, password);
-
-                ResultSet rs = pst.executeQuery();
-                if (rs.next()) {
-                    int userId = rs.getInt("user_id");
-                    String userName = rs.getString("name");
-                    JOptionPane.showMessageDialog(this, "Welcome " + userName + "!");
-                    new Home(userId, userName).setVisible(true);
-                    setVisible(false);
-                } else {
-                    JOptionPane.showMessageDialog(this, "Invalid login");
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage());
-            }
-
-        } else if (ae.getSource() == b2) { // Back
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == loginButton) {
+            loginUser();
+        } else if (e.getSource() == backButton) {
             setVisible(false);
             new Register().setVisible(true);
-        }
-        // 🔹 Forgot password flow
-        else if (ae.getSource() == forgotButton) {
+        } else if (e.getSource() == forgotButton) {
             setVisible(false);
             new ForgotPassword().setVisible(true);
         }
     }
 
+    // 🔹 Simple login logic
+    private void loginUser() {
+        String email = emailField.getText().trim();
+        String password = new String(passwordField.getPassword());
+
+        if (email.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all fields.");
+            return;
+        }
+
+        String query = "SELECT * FROM Users WHERE email=? AND password=?";
+
+        try (Connection conn = Connect_Db.getConnection();
+             PreparedStatement pst = conn.prepareStatement(query)) {
+
+            pst.setString(1, email);
+            pst.setString(2, password);
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                int userId = rs.getInt("user_id");
+                String userName = rs.getString("name");
+
+                JOptionPane.showMessageDialog(this, "Welcome " + userName + "!");
+                new Home(userId, userName).setVisible(true);
+                setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid login. Try again.");
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage());
+        }
+    }
 
     public static void main(String[] args) {
         new Login();

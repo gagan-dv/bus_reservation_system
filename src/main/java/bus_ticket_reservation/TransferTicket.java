@@ -7,7 +7,6 @@ import java.sql.*;
 public class TransferTicket extends JFrame {
     private int userId;
     private JTextField bookingIdField, targetEmailField;
-    private JButton transferButton, backButton;
 
     public TransferTicket(int userId) {
         this.userId = userId;
@@ -17,15 +16,18 @@ public class TransferTicket extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        // Labels + fields
         JLabel bookingLabel = new JLabel("Enter Booking ID:");
         bookingIdField = new JTextField(15);
 
         JLabel targetLabel = new JLabel("Transfer To (Recipient Email):");
         targetEmailField = new JTextField(20);
 
-        transferButton = new JButton("Transfer Ticket");
-        backButton = new JButton("Back");
+        // Buttons
+        JButton transferButton = new JButton("Transfer Ticket");
+        JButton backButton = new JButton("Back");
 
+        // Layout
         JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panel.add(bookingLabel);
@@ -40,6 +42,7 @@ public class TransferTicket extends JFrame {
         add(panel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
+        // Actions
         transferButton.addActionListener(e -> transferTicket());
         backButton.addActionListener(e -> dispose());
 
@@ -47,58 +50,51 @@ public class TransferTicket extends JFrame {
     }
 
     private void transferTicket() {
-        String bookingIdText = bookingIdField.getText().trim();
-        String recipientEmail = targetEmailField.getText().trim();
+        String bookingText = bookingIdField.getText().trim();
+        String email = targetEmailField.getText().trim();
 
-        if (bookingIdText.isEmpty() || recipientEmail.isEmpty()) {
+        if (bookingText.isEmpty() || email.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter all fields.");
             return;
         }
 
         int bookingId;
         try {
-            bookingId = Integer.parseInt(bookingIdText);
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Invalid Booking ID format.");
+            bookingId = Integer.parseInt(bookingText);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Booking ID must be a number.");
             return;
         }
 
         try (Connection conn = Connect_Db.getConnection()) {
-            conn.setAutoCommit(false);
-
-            // 1️⃣ Verify booking belongs to current user
+            // check if booking belongs to user
             PreparedStatement pst1 = conn.prepareStatement(
-                    "SELECT bus_id, seats_booked FROM Bookings WHERE booking_id=? AND user_id=?"
+                    "SELECT booking_id FROM Bookings WHERE booking_id=? AND user_id=?"
             );
             pst1.setInt(1, bookingId);
             pst1.setInt(2, userId);
             ResultSet rs1 = pst1.executeQuery();
-
             if (!rs1.next()) {
                 JOptionPane.showMessageDialog(this, "Booking not found or not yours.");
                 return;
             }
 
-            int busId = rs1.getInt("bus_id");
-            int seatsBooked = rs1.getInt("seats_booked");
-
-            // 2️⃣ Find recipient user_id
+            // get recipient user_id
             PreparedStatement pst2 = conn.prepareStatement("SELECT user_id FROM Users WHERE email=?");
-            pst2.setString(1, recipientEmail);
+            pst2.setString(1, email);
             ResultSet rs2 = pst2.executeQuery();
-
             if (!rs2.next()) {
-                JOptionPane.showMessageDialog(this, "Recipient email not found.");
+                JOptionPane.showMessageDialog(this, "Recipient not found.");
                 return;
             }
             int recipientId = rs2.getInt("user_id");
 
             if (recipientId == userId) {
-                JOptionPane.showMessageDialog(this, "You cannot transfer a ticket to yourself.");
+                JOptionPane.showMessageDialog(this, "You cannot transfer to yourself.");
                 return;
             }
 
-            // 3️⃣ Update booking to new owner
+            // transfer booking
             PreparedStatement pst3 = conn.prepareStatement(
                     "UPDATE Bookings SET user_id=? WHERE booking_id=?"
             );
@@ -106,15 +102,14 @@ public class TransferTicket extends JFrame {
             pst3.setInt(2, bookingId);
             pst3.executeUpdate();
 
-            conn.commit();
-            JOptionPane.showMessageDialog(this, "Ticket transferred successfully to " + recipientEmail);
+            JOptionPane.showMessageDialog(this, "Ticket transferred successfully!");
 
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error transferring ticket: " + e.getMessage());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
     }
 
     public static void main(String[] args) {
-        new TransferTicket(1); // test with user_id = 1
+        new TransferTicket(1);
     }
 }

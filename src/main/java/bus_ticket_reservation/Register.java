@@ -8,35 +8,34 @@ import java.sql.*;
 
 public class Register extends JFrame implements ActionListener {
 
-    private JPanel contentPane;
     private JTextField emailField, nameField, phoneField;
     private JPasswordField passwordField;
-    private JButton createButton, backButton;
+    private JButton registerButton, exitButton;
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Register().setVisible(true));
-    }
+
 
     public Register() {
-        setBounds(600, 200, 500, 450);
+
+        setTitle("Register - Bus Ticket Reservation");
+        setSize(500, 450);
+        setLocationRelativeTo(null); // center the window
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        contentPane = new JPanel();
+        // ==== Main Panel ====
+        JPanel contentPane = new JPanel();
         contentPane.setBackground(Color.WHITE);
-        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-        setContentPane(contentPane);
         contentPane.setLayout(null);
+        setContentPane(contentPane);
 
-        // Title
+        // ==== Title ====
         JLabel titleLabel = new JLabel("Create Your Account");
-        titleLabel.setFont(new Font("Poppins", Font.BOLD, 22));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
         titleLabel.setForeground(new Color(0, 102, 204));
         titleLabel.setBounds(120, 20, 300, 30);
         contentPane.add(titleLabel);
 
-        // Name
+        // ==== Name ====
         JLabel lblName = new JLabel("Name:");
-        lblName.setFont(new Font("Poppins", Font.PLAIN, 14));
         lblName.setBounds(50, 80, 100, 25);
         contentPane.add(lblName);
 
@@ -44,9 +43,8 @@ public class Register extends JFrame implements ActionListener {
         nameField.setBounds(180, 80, 220, 25);
         contentPane.add(nameField);
 
-        // Email
+        // ==== Email ====
         JLabel lblEmail = new JLabel("Email:");
-        lblEmail.setFont(new Font("Poppins", Font.PLAIN, 14));
         lblEmail.setBounds(50, 120, 100, 25);
         contentPane.add(lblEmail);
 
@@ -54,9 +52,8 @@ public class Register extends JFrame implements ActionListener {
         emailField.setBounds(180, 120, 220, 25);
         contentPane.add(emailField);
 
-        // Phone
+        // ==== Phone ====
         JLabel lblPhone = new JLabel("Phone:");
-        lblPhone.setFont(new Font("Poppins", Font.PLAIN, 14));
         lblPhone.setBounds(50, 160, 100, 25);
         contentPane.add(lblPhone);
 
@@ -64,9 +61,8 @@ public class Register extends JFrame implements ActionListener {
         phoneField.setBounds(180, 160, 220, 25);
         contentPane.add(phoneField);
 
-        // Password
+        // ==== Password ====
         JLabel lblPassword = new JLabel("Password:");
-        lblPassword.setFont(new Font("Poppins", Font.PLAIN, 14));
         lblPassword.setBounds(50, 200, 100, 25);
         contentPane.add(lblPassword);
 
@@ -74,50 +70,53 @@ public class Register extends JFrame implements ActionListener {
         passwordField.setBounds(180, 200, 220, 25);
         contentPane.add(passwordField);
 
-        // Buttons
-        createButton = new JButton("Register");
-        createButton.setBounds(100, 300, 120, 35);
-        createButton.setBackground(new Color(0, 102, 204));
-        createButton.setForeground(Color.WHITE);
-        createButton.setFont(new Font("Poppins", Font.BOLD, 16));
-        createButton.addActionListener(this);
-        contentPane.add(createButton);
+        // ==== Buttons ====
+        registerButton = new JButton("Register");
+        registerButton.setBounds(100, 300, 120, 35);
+        registerButton.setBackground(new Color(0, 102, 204));
+        registerButton.setForeground(Color.WHITE);
+        registerButton.addActionListener(this);
+        contentPane.add(registerButton);
 
-        backButton = new JButton("Exit");
-        backButton.setBounds(260, 300, 120, 35);
-        backButton.setBackground(Color.GRAY);
-        backButton.setForeground(Color.WHITE);
-        backButton.setFont(new Font("Poppins", Font.BOLD, 16));
-        backButton.addActionListener(this);
-        contentPane.add(backButton);
+        exitButton = new JButton("Exit");
+        exitButton.setBounds(260, 300, 120, 35);
+        exitButton.setBackground(Color.GRAY);
+        exitButton.setForeground(Color.WHITE);
+        exitButton.addActionListener(this);
+        contentPane.add(exitButton);
 
-        JLabel loginLabel = new JLabel();
-        loginLabel.setText("<html><center>Already have an account?<br>Login</center></html>");
+        // ==== Login Label ====
+        JLabel loginLabel = new JLabel("Already have an account? Login");
         loginLabel.setForeground(new Color(0, 102, 204));
-        loginLabel.setBounds(150, 360, 200, 30);
+        loginLabel.setBounds(150, 360, 250, 30);
         loginLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         loginLabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                new Login().setVisible(true);
+                new Login();
                 setVisible(false);
             }
         });
-        add(loginLabel);
+        contentPane.add(loginLabel);
 
-        // Panel border
+        // ==== Border Panel ====
         JPanel panel = new JPanel();
         panel.setBounds(30, 60, 420, 260);
-        panel.setBorder(new TitledBorder(new LineBorder(new Color(0, 102, 204), 2), "Sign Up",
-                TitledBorder.LEADING, TitledBorder.TOP, new Font("SansSerif", Font.BOLD, 16), new Color(0, 102, 204)));
+        panel.setBorder(new TitledBorder(new LineBorder(new Color(0, 102, 204), 2),
+                "Sign Up", TitledBorder.LEADING, TitledBorder.TOP,
+                new Font("SansSerif", Font.BOLD, 16), new Color(0, 102, 204)));
         panel.setBackground(Color.WHITE);
         contentPane.add(panel);
+
+        // ==== Finally Show Window ====
+        setVisible(true);
     }
 
+    // ==== Button Actions ====
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == createButton) {
+        if (e.getSource() == registerButton) {
             createAccount();
-        } else if (e.getSource() == backButton) {
+        } else if (e.getSource() == exitButton) {
             System.exit(0);
         }
     }
@@ -144,13 +143,16 @@ public class Register extends JFrame implements ActionListener {
             pst.executeUpdate();
             JOptionPane.showMessageDialog(this, "Account created successfully!");
             this.setVisible(false);
-            new Login().setVisible(true);
+            new Login();
 
         } catch (SQLIntegrityConstraintViolationException ex) {
             JOptionPane.showMessageDialog(this, "Email already exists. Choose another one.");
         } catch (Exception ex) {
-            ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
+    }
+
+    public static void main(String[] args) {
+        new Register(); // object is created and window shows itself
     }
 }
