@@ -18,7 +18,7 @@ public class MyBookings extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Table model (column names)
+     
         model = new DefaultTableModel(
                 new String[]{"Booking ID", "Bus Name", "Source", "Destination", "Date", "Seats", "Price"},
                 0
@@ -26,7 +26,7 @@ public class MyBookings extends JFrame {
         table = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(table);
 
-        // Buttons
+       
         JButton cancelButton = new JButton("Cancel Booking");
         JButton refreshButton = new JButton("Refresh");
         JButton backButton = new JButton("Back");
