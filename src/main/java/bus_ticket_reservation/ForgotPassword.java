@@ -11,16 +11,13 @@ public class ForgotPassword extends JFrame {
     private JPasswordField newPasswordField;
     private JButton requestButton, resetButton, backButton;
 
-    // ==== Main Method ====
     public static void main(String[] args) {
         new ForgotPassword();
     }
 
-    // ==== Constructor ====
     public ForgotPassword() {
         super("Forgot Password");
 
-        // ==== Window Setup ====
         setSize(500, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
