@@ -12,19 +12,14 @@ public class Home extends JFrame {
         this.userId = userId;
         this.username = username;
 
-        // Call method to build the GUI
         initialize();
     }
 
     private void initialize() {
-        // Main panel with GridBagLayout
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.WHITE);
-
-        // GridBagConstraints controls where each component goes
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // ==== Welcome Label ====
         JLabel welcomeLabel = new JLabel("Welcome, " + username, SwingConstants.CENTER);
         welcomeLabel.setForeground(new Color(0, 102, 204));
         welcomeLabel.setFont(new Font("Poppins", Font.BOLD, 26));
@@ -32,16 +27,14 @@ public class Home extends JFrame {
         gbc.gridx = 0; // column
         gbc.gridy = 0; // row
         gbc.gridwidth = 2; // take up 2 columns
-        gbc.anchor = GridBagConstraints.CENTER; // center alignment
-        gbc.insets = new Insets(20, 0, 30, 0); // top, left, bottom, right padding
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(20, 0, 30, 0);
         panel.add(welcomeLabel, gbc);
 
-        // Reset constraints for buttons
         gbc.gridwidth = 1; // buttons take one column
-        gbc.fill = GridBagConstraints.HORIZONTAL; // stretch horizontally
-        gbc.insets = new Insets(12, 12, 12, 12); // spacing around buttons
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(12, 12, 12, 12); 
 
-        // ==== Buttons ====
         JButton bookTicket = createButton("Book Ticket", new Color(0, 102, 204));
         gbc.gridy = 1;
         panel.add(bookTicket, gbc);
@@ -62,7 +55,7 @@ public class Home extends JFrame {
         gbc.gridy = 5;
         panel.add(logout, gbc);
 
-        // ==== Button Actions ====
+
         bookTicket.addActionListener(e -> new SearchAndBookBus(userId).setVisible(true));
         myBookings.addActionListener(e -> new MyBookings(userId).setVisible(true));
         transferTicket.addActionListener(e -> new TransferTicket(userId).setVisible(true));
@@ -72,7 +65,6 @@ public class Home extends JFrame {
             new Login().setVisible(true); // open login again
         });
 
-        // ==== Frame Setup ====
         add(panel); // add panel to frame
         setSize(550, 500); // window size
         setLocationRelativeTo(null); // center window on screen
@@ -80,7 +72,6 @@ public class Home extends JFrame {
         setVisible(true); // show window
     }
 
-    // Simple helper method to create styled buttons
     private JButton createButton(String text, Color bgColor) {
         JButton button = new JButton(text);
         button.setFont(new Font("Poppins", Font.BOLD, 16));
@@ -90,7 +81,6 @@ public class Home extends JFrame {
         button.setPreferredSize(new Dimension(450, 45)); // fixed size
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        // Change color on hover
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(bgColor.darker());
@@ -103,7 +93,6 @@ public class Home extends JFrame {
         return button;
     }
 
-    // Main method for testing
     public static void main(String[] args) {
         new Home(1, "TestUser");
     }
