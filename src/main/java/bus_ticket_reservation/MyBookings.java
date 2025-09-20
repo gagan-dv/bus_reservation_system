@@ -36,11 +36,9 @@ public class MyBookings extends JFrame {
         buttonPanel.add(refreshButton);
         buttonPanel.add(backButton);
 
-        // Add components to window
         add(scrollPane, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        // Actions
         cancelButton.addActionListener(e -> cancelBooking());
         refreshButton.addActionListener(e -> loadBookings());
         backButton.addActionListener(e -> dispose());
@@ -49,7 +47,6 @@ public class MyBookings extends JFrame {
         setVisible(true);
     }
 
-    // Load bookings from database
     private void loadBookings() {
         model.setRowCount(0); // clear old rows
 
@@ -80,8 +77,6 @@ public class MyBookings extends JFrame {
         }
     }
 
-    // Cancel booking
-// Cancel booking (with option to cancel some seats)
     private void cancelBooking() {
         int row = table.getSelectedRow();
         if (row == -1) {
@@ -111,7 +106,6 @@ public class MyBookings extends JFrame {
             return;
         }
 
-        // Confirm
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Cancel " + seatsToCancel + " seat(s)?",
                 "Confirm Cancel", JOptionPane.YES_NO_OPTION);
@@ -119,13 +113,11 @@ public class MyBookings extends JFrame {
         if (confirm == JOptionPane.YES_OPTION) {
             try (Connection conn = Connect_Db.getConnection()) {
                 if (seatsToCancel == seatsBooked) {
-                    // Cancel entire booking
                     PreparedStatement pst = conn.prepareStatement(
                             "DELETE FROM Bookings WHERE booking_id=?");
                     pst.setInt(1, bookingId);
                     pst.executeUpdate();
-                } else {
-                    // Reduce seats
+                } else {    
                     PreparedStatement pst = conn.prepareStatement(
                             "UPDATE Bookings SET seats_booked = seats_booked - ? WHERE booking_id=?");
                     pst.setInt(1, seatsToCancel);
@@ -141,7 +133,6 @@ public class MyBookings extends JFrame {
             }
         }
     }
-
 
     public static void main(String[] args) {
         new MyBookings(1); // test with user_id = 1
