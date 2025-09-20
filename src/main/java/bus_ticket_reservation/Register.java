@@ -21,20 +21,16 @@ public class Register extends JFrame implements ActionListener {
         setLocationRelativeTo(null); // center the window
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // ==== Main Panel ====
         JPanel contentPane = new JPanel();
         contentPane.setBackground(Color.WHITE);
         contentPane.setLayout(null);
         setContentPane(contentPane);
-
-        // ==== Title ====
         JLabel titleLabel = new JLabel("Create Your Account");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
         titleLabel.setForeground(new Color(0, 102, 204));
         titleLabel.setBounds(120, 20, 300, 30);
         contentPane.add(titleLabel);
 
-        // ==== Name ====
         JLabel lblName = new JLabel("Name:");
         lblName.setBounds(50, 80, 100, 25);
         contentPane.add(lblName);
@@ -42,8 +38,6 @@ public class Register extends JFrame implements ActionListener {
         nameField = new JTextField();
         nameField.setBounds(180, 80, 220, 25);
         contentPane.add(nameField);
-
-        // ==== Email ====
         JLabel lblEmail = new JLabel("Email:");
         lblEmail.setBounds(50, 120, 100, 25);
         contentPane.add(lblEmail);
@@ -52,7 +46,6 @@ public class Register extends JFrame implements ActionListener {
         emailField.setBounds(180, 120, 220, 25);
         contentPane.add(emailField);
 
-        // ==== Phone ====
         JLabel lblPhone = new JLabel("Phone:");
         lblPhone.setBounds(50, 160, 100, 25);
         contentPane.add(lblPhone);
@@ -61,7 +54,6 @@ public class Register extends JFrame implements ActionListener {
         phoneField.setBounds(180, 160, 220, 25);
         contentPane.add(phoneField);
 
-        // ==== Password ====
         JLabel lblPassword = new JLabel("Password:");
         lblPassword.setBounds(50, 200, 100, 25);
         contentPane.add(lblPassword);
@@ -69,8 +61,6 @@ public class Register extends JFrame implements ActionListener {
         passwordField = new JPasswordField();
         passwordField.setBounds(180, 200, 220, 25);
         contentPane.add(passwordField);
-
-        // ==== Buttons ====
         registerButton = new JButton("Register");
         registerButton.setBounds(100, 300, 120, 35);
         registerButton.setBackground(new Color(0, 102, 204));
@@ -98,7 +88,6 @@ public class Register extends JFrame implements ActionListener {
         });
         contentPane.add(loginLabel);
 
-        // ==== Border Panel ====
         JPanel panel = new JPanel();
         panel.setBounds(30, 60, 420, 260);
         panel.setBorder(new TitledBorder(new LineBorder(new Color(0, 102, 204), 2),
@@ -107,11 +96,9 @@ public class Register extends JFrame implements ActionListener {
         panel.setBackground(Color.WHITE);
         contentPane.add(panel);
 
-        // ==== Finally Show Window ====
         setVisible(true);
     }
 
-    // ==== Button Actions ====
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == registerButton) {
