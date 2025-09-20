@@ -18,14 +18,12 @@ public class Login extends JFrame implements ActionListener {
         getContentPane().setBackground(Color.WHITE);
         setLayout(null);
 
-        // 🔹 Title
         JLabel titleLabel = new JLabel("Bus Ticket Reservation Login", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Poppins", Font.BOLD, 22));
         titleLabel.setForeground(new Color(0, 102, 204));
         titleLabel.setBounds(50, 20, 400, 40);
         add(titleLabel);
 
-        // 🔹 Email
         JLabel emailLabel = new JLabel("Email:");
         emailLabel.setBounds(80, 90, 100, 30);
         add(emailLabel);
@@ -34,7 +32,6 @@ public class Login extends JFrame implements ActionListener {
         emailField.setBounds(200, 90, 200, 30);
         add(emailField);
 
-        // 🔹 Password
         JLabel passwordLabel = new JLabel("Password:");
         passwordLabel.setBounds(80, 140, 100, 30);
         add(passwordLabel);
@@ -42,8 +39,6 @@ public class Login extends JFrame implements ActionListener {
         passwordField = new JPasswordField();
         passwordField.setBounds(200, 140, 200, 30);
         add(passwordField);
-
-        // 🔹 Buttons
         loginButton = new JButton("Login");
         loginButton.setBounds(80, 200, 120, 40);
         styleButton(loginButton, new Color(0, 102, 204));
@@ -68,7 +63,6 @@ public class Login extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    // 🔹 Reusable button style
     private void styleButton(JButton btn, Color bgColor) {
         btn.setBackground(bgColor);
         btn.setForeground(Color.WHITE);
@@ -88,7 +82,6 @@ public class Login extends JFrame implements ActionListener {
         }
     }
 
-    // 🔹 Simple login logic
     private void loginUser() {
         String email = emailField.getText().trim();
         String password = new String(passwordField.getPassword());
