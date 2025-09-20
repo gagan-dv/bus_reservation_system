@@ -23,8 +23,6 @@ public class ForgotPassword extends JFrame {
         setLocationRelativeTo(null);
         getContentPane().setBackground(new Color(245, 248, 255));
         setLayout(null);
-
-        // ==== Title Panel ====
         JPanel headerPanel = new JPanel();
         headerPanel.setBounds(0, 0, 500, 50);
         headerPanel.setBackground(new Color(0, 102, 204));
@@ -36,7 +34,6 @@ public class ForgotPassword extends JFrame {
         headerPanel.add(titleLabel, BorderLayout.CENTER);
         add(headerPanel);
 
-        // ==== Email ====
         JLabel emailLabel = new JLabel("Registered Email:");
         emailLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
         emailLabel.setBounds(80, 100, 150, 30);
@@ -51,19 +48,15 @@ public class ForgotPassword extends JFrame {
         styleButton(requestButton, new Color(0, 102, 204));
         requestButton.setBounds(150, 150, 200, 40);
         add(requestButton);
-
-        // ==== Token ====
         JLabel tokenLabel = new JLabel("Enter Token:");
         tokenLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
         tokenLabel.setBounds(80, 210, 150, 30);
         add(tokenLabel);
-
         tokenField = new JTextField();
         styleTextField(tokenField);
         tokenField.setBounds(240, 210, 180, 30);
         add(tokenField);
 
-        // ==== New Password ====
         JLabel newPassLabel = new JLabel("New Password:");
         newPassLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
         newPassLabel.setBounds(80, 260, 150, 30);
@@ -78,26 +71,19 @@ public class ForgotPassword extends JFrame {
         styleButton(resetButton, new Color(0, 153, 76));
         resetButton.setBounds(150, 320, 200, 40);
         add(resetButton);
-
-        // ==== Back Button ====
         backButton = new JButton("Back to Login");
         styleButton(backButton, new Color(153, 153, 153));
         backButton.setBounds(150, 380, 200, 40);
         add(backButton);
-
-        // ==== Button Actions ====
         requestButton.addActionListener(e -> handleRequestReset());
         resetButton.addActionListener(e -> handlePasswordReset());
         backButton.addActionListener(e -> {
             dispose();
             new Login();
         });
-
-        // ==== Show Window ====
         setVisible(true);
     }
 
-    // ==== Reusable style for text fields ====
     private void styleTextField(JTextField field) {
         field.setFont(new Font("Poppins", Font.PLAIN, 14));
         field.setBorder(BorderFactory.createCompoundBorder(
@@ -107,7 +93,6 @@ public class ForgotPassword extends JFrame {
         field.setBackground(Color.WHITE);
     }
 
-    // ==== Reusable style for buttons ====
     private void styleButton(JButton button, Color bg) {
         button.setFocusPainted(false);
         button.setBackground(bg);
@@ -117,7 +102,6 @@ public class ForgotPassword extends JFrame {
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
-    // ==== Generate secure random token ====
     private String generateToken() {
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[8];
@@ -125,7 +109,6 @@ public class ForgotPassword extends JFrame {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
-    // ==== Step 1: Request reset ====
     private void handleRequestReset() {
         String email = emailField.getText().trim();
         if (email.isEmpty()) {
@@ -158,7 +141,6 @@ public class ForgotPassword extends JFrame {
         }
     }
 
-    // ==== Step 2: Reset password ====
     private void handlePasswordReset() {
         String email = emailField.getText().trim();
         String token = tokenField.getText().trim();
