@@ -6,20 +6,16 @@ import java.util.Properties;
 
 public class EmailUtils {
 
-    // Replace with your Gmail and App Password
     private static final String EMAIL = "your_email@gmail.com";
     private static final String APP_PASSWORD = "your_app_password";
 
     public static void sendEmail(String to, String subject, String body) {
         try {
-            // Gmail SMTP settings
             Properties props = new Properties();
             props.put("mail.smtp.host", "smtp.gmail.com");
             props.put("mail.smtp.port", "587");
             props.put("mail.smtp.auth", "true");
             props.put("mail.smtp.starttls.enable", "true");
-
-            // Login with Gmail + App Password
             Session session = Session.getInstance(props, new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(EMAIL, APP_PASSWORD);
@@ -32,8 +28,6 @@ public class EmailUtils {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject(subject);
             message.setText(body);
-
-            // Send
             Transport.send(message);
 
             System.out.println("Email sent successfully!");
@@ -42,8 +36,6 @@ public class EmailUtils {
             System.out.println("Error sending email: " + e.getMessage());
         }
     }
-
-    // Quick test
     public static void main(String[] args) {
         sendEmail("friend@example.com", "Hello!", "This is a test email.");
     }
