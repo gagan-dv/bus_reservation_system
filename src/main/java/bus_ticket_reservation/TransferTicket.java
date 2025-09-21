@@ -16,18 +16,15 @@ public class TransferTicket extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Labels + fields
         JLabel bookingLabel = new JLabel("Enter Booking ID:");
         bookingIdField = new JTextField(15);
 
         JLabel targetLabel = new JLabel("Transfer To (Recipient Email):");
         targetEmailField = new JTextField(20);
 
-        // Buttons
         JButton transferButton = new JButton("Transfer Ticket");
         JButton backButton = new JButton("Back");
 
-        // Layout
         JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panel.add(bookingLabel);
@@ -42,7 +39,6 @@ public class TransferTicket extends JFrame {
         add(panel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        // Actions
         transferButton.addActionListener(e -> transferTicket());
         backButton.addActionListener(e -> dispose());
 
@@ -67,7 +63,6 @@ public class TransferTicket extends JFrame {
         }
 
         try (Connection conn = Connect_Db.getConnection()) {
-            // check if booking belongs to user
             PreparedStatement pst1 = conn.prepareStatement(
                     "SELECT booking_id FROM Bookings WHERE booking_id=? AND user_id=?"
             );
@@ -79,7 +74,6 @@ public class TransferTicket extends JFrame {
                 return;
             }
 
-            // get recipient user_id
             PreparedStatement pst2 = conn.prepareStatement("SELECT user_id FROM Users WHERE email=?");
             pst2.setString(1, email);
             ResultSet rs2 = pst2.executeQuery();
@@ -94,7 +88,6 @@ public class TransferTicket extends JFrame {
                 return;
             }
 
-            // transfer booking
             PreparedStatement pst3 = conn.prepareStatement(
                     "UPDATE Bookings SET user_id=? WHERE booking_id=?"
             );
