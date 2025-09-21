@@ -16,18 +16,15 @@ public class ValidateTicket extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // ✅ Main panel
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(new Color(245, 247, 250));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // ✅ Title
         JLabel titleLabel = new JLabel("Validate Your Ticket", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Poppins", Font.BOLD, 20));
         titleLabel.setForeground(new Color(0, 102, 204));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
-        // ✅ Form Panel
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(Color.WHITE);
         formPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -49,7 +46,6 @@ public class ValidateTicket extends JFrame {
         gbc.gridx = 1;
         formPanel.add(bookingIdField, gbc);
 
-        // ✅ Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         buttonPanel.setBackground(Color.WHITE);
 
@@ -65,14 +61,12 @@ public class ValidateTicket extends JFrame {
         mainPanel.add(formPanel, BorderLayout.CENTER);
         add(mainPanel);
 
-        // ✅ Actions
         validateButton.addActionListener(e -> validateTicket());
         backButton.addActionListener(e -> dispose());
 
         setVisible(true);
     }
 
-    // 🔹 Styled button (kept same as your design)
     private JButton styledButton(String text, Color bgColor) {
         JButton button = new JButton(text);
         button.setFocusPainted(false);
@@ -93,7 +87,6 @@ public class ValidateTicket extends JFrame {
         return button;
     }
 
-    // 🔹 Simple logic for validation
     private void validateTicket() {
         String bookingIdText = bookingIdField.getText().trim();
 
@@ -128,7 +121,7 @@ public class ValidateTicket extends JFrame {
 
                 if (seats > 0) {
                     JOptionPane.showMessageDialog(this,
-                            "✅ Ticket is VALID!\n\n" +
+                            "Ticket is VALID!\n\n" +
                                     "Booking ID: " + bookingId + "\n" +
                                     "Bus: " + busName + "\n" +
                                     "Route: " + source + " → " + destination + "\n" +
@@ -136,7 +129,7 @@ public class ValidateTicket extends JFrame {
                                     "Seats: " + seats
                     );
                 } else {
-                    JOptionPane.showMessageDialog(this, "❌ Ticket is invalid (no seats booked).");
+                    JOptionPane.showMessageDialog(this, "Ticket is invalid (no seats booked).");
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "No booking found with this ID.");
