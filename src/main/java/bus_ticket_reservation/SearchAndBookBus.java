@@ -19,8 +19,6 @@ public class SearchAndBookBus extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
-
-        // 🔹 Top Panel (Search Fields)
         JPanel searchPanel = new JPanel();
 
         searchPanel.add(new JLabel("Source:"));
@@ -44,8 +42,7 @@ public class SearchAndBookBus extends JFrame {
         searchPanel.add(refreshBtn);
 
         add(searchPanel, BorderLayout.NORTH);
-
-        // 🔹 Table
+    
         model = new DefaultTableModel(
                 new String[]{"Bus ID", "Bus Name", "Source", "Destination", "Date", "Price", "Seats Available"},
                 0
@@ -54,7 +51,6 @@ public class SearchAndBookBus extends JFrame {
         JScrollPane scrollPane = new JScrollPane(busTable);
         add(scrollPane, BorderLayout.CENTER);
 
-        // 🔹 Bottom Panel (Booking)
         JPanel bookingPanel = new JPanel();
 
         bookingPanel.add(new JLabel("Seats to Book:"));
@@ -67,7 +63,6 @@ public class SearchAndBookBus extends JFrame {
 
         add(bookingPanel, BorderLayout.SOUTH);
 
-        // Load all buses at start
         loadBuses();
 
         setVisible(true);
